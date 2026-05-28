@@ -34,16 +34,24 @@ class BookCoverWidget extends StatelessWidget {
             if (imageUrl == null || imageUrl!.isEmpty) {
               return _fallback();
             }
+            // Optimize memory by resizing image to fit its container
+            int? cacheWidth;
+            if (width != double.infinity && width > 0) {
+              cacheWidth = (width * 2.5).toInt(); // Factor for retina displays
+            }
+
             if (imageUrl!.startsWith('assets/')) {
               return Image.asset(
                 imageUrl!,
                 fit: BoxFit.cover,
+                cacheWidth: cacheWidth,
                 errorBuilder: (context, error, stackTrace) => _fallback(),
               );
             }
             return CachedNetworkImage(
               imageUrl: imageUrl!,
               fit: BoxFit.cover,
+              memCacheWidth: cacheWidth,
               placeholder: (context, url) => _shimmer(),
               errorWidget: (context, url, error) => _fallback(),
             );

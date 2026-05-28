@@ -153,6 +153,7 @@ class BookService {
       } else if (sources.isWeb) {
         // Fallback ke Web Reader / Preview via ReaderPage
         debugPrint('[BookService] 🌐 No direct link, falling back to web reader: ${sources.webUrl}');
+        ReadingHistoryService.recordBookOpen(book);
         Navigator.push(
           context,
           MaterialPageRoute(

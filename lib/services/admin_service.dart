@@ -1,31 +1,38 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/book_model.dart';
+import 'local_book_service.dart';
 
 class AdminService {
   static final _firestore = FirebaseFirestore.instance;
   static final CollectionReference _booksCol = _firestore.collection('books');
 
-  /// Stream all books for the dashboard
+  /// Stream all books for the dashboard (includes local books)
   static Stream<List<BookModel>> watchAllBooks() {
     return _booksCol.orderBy('createdAt', descending: true).snapshots().map((snapshot) {
-      return snapshot.docs
+      final firestoreBooks = snapshot.docs
           .map((doc) => BookModel.fromFirestore(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
+      
+      return [...LocalBookService.localBooks, ...firestoreBooks];
     });
   }
 
   /// Get total books count once
   static Future<int> getBooksCount() async {
     final snapshot = await _booksCol.count().get();
-    return snapshot.count ?? 0;
+    final firestoreCount = snapshot.count ?? 0;
+    return firestoreCount + LocalBookService.localBooks.length;
   }
 
-  /// Get recent books (last 5)
+  /// Get recent books (includes local books)
   static Future<List<BookModel>> getRecentBooks({int limit = 5}) async {
     final snapshot = await _booksCol.orderBy('createdAt', descending: true).limit(limit).get();
-    return snapshot.docs
+    final firestoreBooks = snapshot.docs
         .map((doc) => BookModel.fromFirestore(doc.data() as Map<String, dynamic>, doc.id))
         .toList();
+    
+    final allBooks = [...LocalBookService.localBooks, ...firestoreBooks];
+    return allBooks.take(limit).toList();
   }
 
   /// Add a new book

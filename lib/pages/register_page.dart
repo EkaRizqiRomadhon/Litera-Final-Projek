@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:litera2/l10n/app_localizations.dart';
 import '../core/app_colors.dart';
+import '../core/app_theme.dart';
 import '../widgets/custom_elements.dart';
 import '../auth_service.dart';
 
@@ -106,11 +107,13 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: AppColors.primary,
-      appBar: AppBar(
+    // Auth pages selalu light mode
+    return Theme(
+      data: AppTheme.light,
+      child: Scaffold(
+        backgroundColor: AppColors.primary,
+        appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
@@ -132,7 +135,7 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 30),
           Expanded(
             child: Material(
-              color: isDark ? AppColors.backgroundDark : const Color(0xFFF2F1ED),
+              color: const Color(0xFFF2F1ED),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(50)),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
@@ -241,6 +244,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }

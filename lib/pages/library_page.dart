@@ -267,15 +267,59 @@ class _HistoryTab extends StatelessWidget {
 
         final all = prov.history;
 
-        return ListView.builder(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
-          physics: const BouncingScrollPhysics(),
-          itemCount: all.length,
-          itemBuilder: (_, i) => _HistoryCard(
-            history: all[i],
-            l10n: l10n,
-            onDelete: () => prov.deleteHistory(all[i].bookId),
-          ),
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${all.length} Buku dibaca',
+                    style: const TextStyle(fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                  ),
+                  TextButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                          title: const Text('Hapus Semua Riwayat', style: TextStyle(fontWeight: FontWeight.w800)),
+                          content: const Text('Anda yakin ingin menghapus semua riwayat membaca? Tindakan ini tidak dapat dibatalkan.'),
+                          actions: [
+                            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+                            FilledButton(
+                              onPressed: () {
+                                Navigator.pop(ctx);
+                                prov.clearAll();
+                              },
+                              style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+                              child: Text(l10n.delete),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.delete_sweep_rounded, color: AppColors.error, size: 20),
+                    label: const Text('Hapus Semua', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.w700)),
+                    style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+                physics: const BouncingScrollPhysics(),
+                itemCount: all.length,
+                itemBuilder: (_, i) => _HistoryCard(
+                  history: all[i],
+                  l10n: l10n,
+                  onDelete: () => prov.deleteHistory(all[i].bookId),
+                ),
+              ),
+            ),
+          ],
         );
       },
     );

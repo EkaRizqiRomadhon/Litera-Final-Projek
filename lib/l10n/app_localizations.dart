@@ -197,7 +197,7 @@ abstract class AppLocalizations {
   /// No description provided for @readingChallenge.
   ///
   /// In id, this message translates to:
-  /// **'Target Membaca 2025'**
+  /// **'Target Membaca 2026'**
   String get readingChallenge;
 
   /// No description provided for @readingChallengeProgress.

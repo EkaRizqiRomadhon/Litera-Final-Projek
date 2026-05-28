@@ -121,7 +121,7 @@ class SmallProfileAvatar extends StatelessWidget {
           stream: controller.userStream,
           initialData: controller.currentUser,
           builder: (context, snapshot) {
-            final user = snapshot.data;
+            final user = controller.currentUser ?? snapshot.data;
             final url = user?.photoURL;
 
             // Use direct URL only
@@ -131,34 +131,51 @@ class SmallProfileAvatar extends StatelessWidget {
               debugPrint('[SmallProfileAvatar] 🖼️ Loading URL: $finalUrl');
             }
 
-            return CircleAvatar(
-              radius: radius,
-              backgroundColor: Colors.white.withValues(alpha: 0.3),
+            return SizedBox(
+              width: radius * 2,
+              height: radius * 2,
               child: ClipOval(
                 child: (finalUrl != null)
                     ? Image.network(
                         finalUrl,
                         key: ValueKey(finalUrl),
                         fit: BoxFit.cover,
+                        width: radius * 2,
+                        height: radius * 2,
                         loadingBuilder: (context, child, loadingProgress) {
                           if (loadingProgress == null) return child;
-                          return Center(
-                            child: SizedBox(
-                              width: radius,
-                              height: radius,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
+                          return Container(
+                            width: radius * 2,
+                            height: radius * 2,
+                            color: Colors.white.withValues(alpha: 0.3),
+                            child: Center(
+                              child: SizedBox(
+                                width: radius,
+                                height: radius,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           );
                         },
                         errorBuilder: (context, error, stackTrace) {
                           debugPrint('[SmallProfileAvatar] Error: $error');
-                          return Icon(Icons.person, size: radius * 1.3, color: Colors.white);
+                          return Container(
+                            width: radius * 2,
+                            height: radius * 2,
+                            color: Colors.white.withValues(alpha: 0.3),
+                            child: Icon(Icons.person, size: radius * 1.3, color: Colors.white),
+                          );
                         },
                       )
-                    : Icon(Icons.person, size: radius * 1.3, color: Colors.white),
+                    : Container(
+                        width: radius * 2,
+                        height: radius * 2,
+                        color: Colors.white.withValues(alpha: 0.3),
+                        child: Icon(Icons.person, size: radius * 1.3, color: Colors.white),
+                      ),
               ),
             );
           },

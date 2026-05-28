@@ -36,6 +36,7 @@ class BookProvider extends ChangeNotifier {
   // ── Related books (detail page) ───────────────────────────────────────────────
   List<BookModel> _relatedBooks = [];
   LoadState _relatedState = LoadState.idle;
+  String _relatedBookId = ''; // Cache key to avoid redundant loads
 
   // ── Getters ──────────────────────────────────────────────────────────────────
   List<BookModel> get popularBooks => _popularBooks;
@@ -75,15 +76,16 @@ class BookProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final results = await Future.wait([
-        _safeLoad(() => GoogleBooksService.getPopularBooks(maxResults: 10)),
-        _safeLoad(() => GoogleBooksService.getNewestBooks(maxResults: 10)),
-        _safeLoad(() => GoogleBooksService.getRecommendations(
-              categories: ['fiction', 'self-help', 'technology'],
-              maxResults: 10,
-            )),
-        _safeLoad(() => GoogleBooksService.getTrendingBooks(maxResults: 10)),
-      ]);
+      // Load sequentially to reduce peak memory and CPU load
+      final popular = await _safeLoad(() => GoogleBooksService.getPopularBooks(maxResults: 6));
+      final newest = await _safeLoad(() => GoogleBooksService.getNewestBooks(maxResults: 6));
+      final recommended = await _safeLoad(() => GoogleBooksService.getRecommendations(
+            categories: ['fiction', 'self-help', 'technology'],
+            maxResults: 6,
+          ));
+      final trending = await _safeLoad(() => GoogleBooksService.getTrendingBooks(maxResults: 6));
+
+      final results = [popular, newest, recommended, trending];
 
       _popularBooks = results[0];
       _newestBooks = results[1];
@@ -225,7 +227,7 @@ class BookProvider extends ChangeNotifier {
 
     try {
       final localMatches = LocalBookService.searchBooks(q);
-      final apiResults = await GoogleBooksService.searchBooks(q, maxResults: 20);
+      final apiResults = await GoogleBooksService.searchBooks(q, maxResults: 12);
       _searchResults = [...localMatches, ...apiResults];
       _searchHasMore = apiResults.length >= 20;
       _searchState = LoadState.loaded;
@@ -267,11 +269,14 @@ class BookProvider extends ChangeNotifier {
   // ── Related ───────────────────────────────────────────────────────────────────
 
   Future<void> loadRelatedBooks(BookModel book) async {
+    // Skip if already loaded for this book
+    if (_relatedBookId == book.id && _relatedState == LoadState.loaded) return;
+    _relatedBookId = book.id;
     _relatedBooks = [];
     _relatedState = LoadState.loading;
     notifyListeners();
     try {
-      _relatedBooks = await GoogleBooksService.getRelatedBooks(book);
+      _relatedBooks = await GoogleBooksService.getRelatedBooks(book, maxResults: 6);
       _relatedState = LoadState.loaded;
     } catch (_) {
       _relatedState = LoadState.error;

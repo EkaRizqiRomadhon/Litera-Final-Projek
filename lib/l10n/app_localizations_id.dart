@@ -57,7 +57,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get quoteOfTheDay => 'Kutipan Hari Ini';
 
   @override
-  String get readingChallenge => 'Target Membaca 2025';
+  String get readingChallenge => 'Target Membaca 2026';
 
   @override
   String readingChallengeProgress(int finished, int total) {

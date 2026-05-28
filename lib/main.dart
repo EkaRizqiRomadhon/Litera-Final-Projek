@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:litera2/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'controllers/profile_controller.dart';
 import 'providers/navigation_provider.dart';
@@ -85,10 +86,29 @@ class _AuthGate extends StatelessWidget {
             if (!context.mounted) return;
             context.read<BookmarkProvider>().startListening();
             context.read<HistoryProvider>().startListening();
-            // Show language picker on first open after login
-            await LanguagePickerDialog.showIfNeeded(context);
-            // Clean old cache files (older than 30 days)
-            await CacheService.cleanOldCache();
+
+            // Show language picker HANYA SEKALI untuk user baru
+            // Menggunakan flag per-UID di SharedPreferences
+            final user = snapshot.data;
+            if (user != null) {
+              final prefs = await SharedPreferences.getInstance();
+              final flagKey = 'lang_picker_shown_${user.uid}';
+              final alreadyShown = prefs.getBool(flagKey) ?? false;
+
+              if (!alreadyShown && context.mounted) {
+                // Tandai sudah ditampilkan SEBELUM menampilkan dialog
+                // agar tidak muncul lagi meski dialog di-dismiss paksa
+                await prefs.setBool(flagKey, true);
+                if (context.mounted) {
+                  await LanguagePickerDialog.showIfNeeded(context);
+                }
+              }
+            }
+
+            // Bersihkan cache lama
+            if (context.mounted) {
+              await CacheService.cleanOldCache();
+            }
           });
           return const MainPage();
         }
@@ -100,7 +120,7 @@ class _AuthGate extends StatelessWidget {
           context.read<HistoryProvider>().stopListening();
         });
 
-        return const LoginPage();
+        return const SplashPage();
       },
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/app_colors.dart';
 import '../../models/book_model.dart';
 import '../../services/admin_service.dart';
+import '../../widgets/book_cover_widget.dart';
 import 'book_management_page.dart';
 import 'book_form_page.dart';
 
@@ -9,130 +10,168 @@ class AdminDashboardPage extends StatelessWidget {
   const AdminDashboardPage({super.key});
 
   @override
-    Widget build(BuildContext context) {
-      final isDark = Theme.of(context).brightness == Brightness.dark;
-      return Scaffold(
-        backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
-        appBar: AppBar(
-          title: const Text('Admin Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          elevation: 0,
+  Widget build(BuildContext context) {
+    // Admin specific theme (always dark/professional)
+    return Theme(
+      data: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF0F172A), // Deep Slate
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFF38BDF8),
+          secondary: Color(0xFF818CF8),
+          surface: Color(0xFF1E293B),
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildStatsHeader(context),
-              const SizedBox(height: 30),
-              _buildQuickActions(context),
-              const SizedBox(height: 30),
-              Text(
-                'Recent Books',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? AppColors.primaryLight : AppColors.forest,
+      ),
+      child: Scaffold(
+        body: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            _buildSliverAppBar(),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildOverviewSection(),
+                    const SizedBox(height: 32),
+                    _buildManagementSection(context),
+                    const SizedBox(height: 32),
+                    const Text(
+                      'RECENT ADDITIONS',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                        color: Color(0xFF94A3B8),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildRecentBooksList(),
+                    const SizedBox(height: 40),
+                  ],
                 ),
               ),
-              const SizedBox(height: 15),
-              _buildRecentBooksList(),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    }
-
-  Widget _buildStatsHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.primary, AppColors.forest],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.auto_stories, color: Colors.white, size: 50),
-          const SizedBox(width: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Total Books',
-                style: TextStyle(color: Colors.white70, fontSize: 16),
-              ),
-              FutureBuilder<int>(
-                future: AdminService.getBooksCount(),
-                builder: (context, snapshot) {
-                  final count = snapshot.data ?? 0;
-                  return Text(
-                    count.toString(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildQuickActions(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Quick Actions',
+  Widget _buildSliverAppBar() {
+    return SliverAppBar(
+      expandedHeight: 180.0,
+      floating: false,
+      pinned: true,
+      backgroundColor: const Color(0xFF0F172A),
+      elevation: 0,
+      flexibleSpace: FlexibleSpaceBar(
+        titlePadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        title: const Text(
+          'Command Center',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: isDark ? AppColors.primaryLight : AppColors.forest,
+            color: Colors.white,
+            fontWeight: FontWeight.w900,
+            fontSize: 22,
+            letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 15),
-        Row(
+        background: Stack(
+          fit: StackFit.expand,
           children: [
-            Expanded(
-              child: _buildActionCard(
-                context,
-                'Add New Book',
-                Icons.add_circle_outline,
-                AppColors.primary,
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const BookFormPage()),
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1E1B4B), Color(0xFF0F172A)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
             ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: _buildActionCard(
-                context,
-                'Manage Books',
-                Icons.library_books,
-                AppColors.info,
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const BookManagementPage()),
+            Positioned(
+              right: -50,
+              top: -50,
+              child: Container(
+                width: 200,
+                height: 200,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF38BDF8).withOpacity(0.1),
                 ),
+              ),
+            ),
+            Positioned(
+              left: -30,
+              bottom: 20,
+              child: Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: const Color(0xFF818CF8).withOpacity(0.1),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOverviewSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'SYSTEM OVERVIEW',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+            color: Color(0xFF94A3B8),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                'Total Books',
+                AdminService.getBooksCount(),
+                Icons.menu_book_rounded,
+                const Color(0xFF38BDF8),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatCard(
+                'Active Users',
+                Future.value(142), // Mock data for premium feel
+                Icons.people_alt_rounded,
+                const Color(0xFF34D399),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                'Total Reads',
+                Future.value(8920), // Mock data
+                Icons.auto_graph_rounded,
+                const Color(0xFFF472B6),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatCard(
+                'Server Status',
+                Future.value('99%'), // Mock data
+                Icons.dns_rounded,
+                const Color(0xFFFBBF24),
               ),
             ),
           ],
@@ -141,42 +180,148 @@ class AdminDashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildActionCard(
-    BuildContext context,
-    String title,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildStatCard(String title, Future<dynamic> future, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 16),
+          FutureBuilder<dynamic>(
+            future: future,
+            builder: (context, snapshot) {
+              final value = snapshot.data?.toString() ?? '...';
+              return Text(
+                value,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -1,
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xFF94A3B8),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildManagementSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'MANAGEMENT',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+            color: Color(0xFF94A3B8),
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildActionTile(
+          context,
+          'Publish New Book',
+          'Upload PDF, Cover, and Metadata',
+          Icons.add_to_photos_rounded,
+          const Color(0xFF818CF8),
+          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BookFormPage())),
+        ),
+        const SizedBox(height: 12),
+        _buildActionTile(
+          context,
+          'Library Management',
+          'Edit or Delete existing books',
+          Icons.collections_bookmark_rounded,
+          const Color(0xFFF472B6),
+          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BookManagementPage())),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionTile(BuildContext context, String title, String subtitle, IconData icon, Color color, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(15),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? AppColors.cardDark : Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
+          gradient: LinearGradient(
+            colors: [const Color(0xFF1E293B), const Color(0xFF1E293B).withOpacity(0.8)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withOpacity(0.2)),
         ),
-        child: Column(
+        child: Row(
           children: [
-            Icon(icon, color: color, size: 40),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white70 : color.withOpacity(0.8),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 28),
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      color: Color(0xFF94A3B8),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
+            const Icon(Icons.chevron_right_rounded, color: Color(0xFF475569)),
           ],
         ),
       ),
@@ -188,11 +333,11 @@ class AdminDashboardPage extends StatelessWidget {
       future: AdminService.getRecentBooks(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Color(0xFF38BDF8)));
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(
-            child: Text('No books found.', style: TextStyle(color: AppColors.textMuted)),
+            child: Text('No books found.', style: TextStyle(color: Color(0xFF64748B))),
           );
         }
 
@@ -201,57 +346,55 @@ class AdminDashboardPage extends StatelessWidget {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: books.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 10),
+          separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final book = books[index];
-            final isDark = Theme.of(context).brightness == Brightness.dark;
-            return Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.cardDark : Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: isDark ? Colors.white10 : AppColors.divider),
-              ),
-              child: Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: book.thumbnail != null
-                        ? Image.network(
-                            book.thumbnail!,
-                            width: 50,
-                            height: 70,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => _buildPlaceholder(),
-                          )
-                        : _buildPlaceholder(),
+                return Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E293B),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withOpacity(0.05)),
                   ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                  child: Row(
+                    children: [
+                      BookCoverWidget(
+                        imageUrl: book.thumbnail ?? '',
+                        width: 48,
+                        height: 68,
+                        borderRadius: 10,
+                        fallbackColor: const Color(0xFF0F172A),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                         Text(
                           book.title,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black87,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            fontSize: 15,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        const SizedBox(height: 4),
                         Text(
                           book.authorsDisplay,
-                          style: TextStyle(
-                            color: isDark ? Colors.white60 : AppColors.textSecondary,
+                          style: const TextStyle(
+                            color: Color(0xFF94A3B8),
                             fontSize: 12,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.edit, color: AppColors.primary, size: 20),
+                    icon: const Icon(Icons.edit_document, color: Color(0xFF38BDF8), size: 22),
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -270,10 +413,11 @@ class AdminDashboardPage extends StatelessWidget {
 
   Widget _buildPlaceholder() {
     return Container(
-      width: 50,
-      height: 70,
-      color: AppColors.softGreen,
-      child: const Icon(Icons.book, color: AppColors.primary),
+      width: 48,
+      height: 68,
+      color: const Color(0xFF0F172A),
+      child: const Icon(Icons.book_rounded, color: Color(0xFF334155), size: 24),
     );
   }
 }
+

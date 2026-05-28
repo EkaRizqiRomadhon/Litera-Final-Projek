@@ -53,11 +53,7 @@ class _DetailBookPageState extends State<DetailBookPage> {
 
   void _openReader(BuildContext context) async {
     final book = widget.book;
-    await ReadingHistoryService.recordBookOpen(book);
-    if (!context.mounted) return;
-
     BookService.openBook(context, book);
-
   }
 
   @override

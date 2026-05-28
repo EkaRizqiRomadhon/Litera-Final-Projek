@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:litera2/auth_service.dart';
 import 'package:litera2/l10n/app_localizations.dart';
 import '../core/app_colors.dart';
+import '../core/app_theme.dart';
 import '../widgets/custom_elements.dart';
+import 'main_page.dart';
 import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -72,12 +74,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      backgroundColor: AppColors.primary,
-      body: SafeArea(
+    // Auth pages selalu light mode
+    return Theme(
+      data: AppTheme.light,
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        backgroundColor: AppColors.primary,
+        body: SafeArea(
         child: Column(
           children: [
             Padding(
@@ -105,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             Expanded(
               child: Material(
-                color: isDark ? AppColors.backgroundDark : const Color(0xFFF2F1ED),
+                color: const Color(0xFFF2F1ED),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(50),
                 ),
@@ -137,6 +141,14 @@ class _LoginPageState extends State<LoginPage> {
                                 backgroundColor: Colors.green,
                               ),
                             );
+                            // Navigasi langsung tanpa tunggu stream
+                            if (context.mounted) {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (_) => const MainPage()),
+                                (route) => false,
+                              );
+                            }
                           } else if (result != "Login dibatalkan") {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -194,6 +206,14 @@ class _LoginPageState extends State<LoginPage> {
                                 backgroundColor: Colors.green,
                               ),
                             );
+                            // Navigasi langsung tanpa tunggu stream
+                            if (context.mounted) {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(builder: (_) => const MainPage()),
+                                (route) => false,
+                              );
+                            }
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -243,6 +263,7 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
       ),
-    );
+    ),
+  );
   }
 }

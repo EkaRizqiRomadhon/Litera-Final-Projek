@@ -57,7 +57,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quoteOfTheDay => 'Quote of the Day';
 
   @override
-  String get readingChallenge => '2025 Reading Challenge';
+  String get readingChallenge => '2026 Reading Challenge';
 
   @override
   String readingChallengeProgress(int finished, int total) {

@@ -17,6 +17,7 @@ import '../widgets/profile_menu_tile.dart';
 import '../widgets/stat_card.dart';
 import '../services/user_service.dart';
 import 'admin/admin_dashboard_page.dart';
+import 'splash_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -87,7 +88,9 @@ class _ProfileViewState extends State<_ProfileView> {
           stream: controller.userStream,
           initialData: controller.currentUser,
           builder: (context, snapshot) {
-            final user = snapshot.data;
+            // Selalu ambil user terbaru dari controller karena stream 
+            // terkadang tidak langsung emit saat updatePhotoURL
+            final user = controller.currentUser ?? snapshot.data;
 
             return ListView(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 120),
@@ -159,24 +162,24 @@ class _ProfileViewState extends State<_ProfileView> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             decoration: BoxDecoration(
-              color: (user?.emailVerified == true ? AppColors.success : Colors.orange).withValues(alpha: 0.1),
+              color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  user?.emailVerified == true ? Icons.verified_rounded : Icons.warning_amber_rounded,
+                const Icon(
+                  Icons.verified_rounded,
                   size: 16,
-                  color: user?.emailVerified == true ? AppColors.success : Colors.orange,
+                  color: AppColors.success,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  user?.emailVerified == true ? l10n.emailVerified : l10n.emailNotVerified,
-                  style: TextStyle(
+                  l10n.emailVerified,
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: user?.emailVerified == true ? AppColors.success : Colors.orange,
+                    color: AppColors.success,
                   ),
                 ),
               ],
@@ -223,16 +226,6 @@ class _ProfileViewState extends State<_ProfileView> {
           subtitle: user?.email ?? '-', 
           trailing: const SizedBox.shrink()
         ),
-        if (user?.emailVerified == false)
-          ProfileMenuTile(
-            icon: Icons.mark_email_unread_rounded,
-            iconColor: Colors.orangeAccent,
-            title: l10n.resendVerification,
-            onTap: () async {
-              await controller.sendVerificationEmail();
-              if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.verificationSent)));
-            },
-          ),
       ],
     );
   }
@@ -290,33 +283,7 @@ class _ProfileViewState extends State<_ProfileView> {
   }
 
   Widget _buildAdminSection(BuildContext context) {
-    return StreamBuilder(
-      stream: UserService.watchProfile(),
-      builder: (context, snapshot) {
-        final profile = snapshot.data;
-        if (profile == null || !profile.isAdmin) {
-          return const SizedBox.shrink();
-        }
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTitle('ADMIN PANEL'),
-            const SizedBox(height: 8),
-            ProfileMenuTile(
-              icon: Icons.admin_panel_settings_rounded,
-              iconColor: AppColors.primary,
-              title: 'Admin Dashboard',
-              subtitle: 'Manage books and application data',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AdminDashboardPage()),
-              ),
-            ),
-          ],
-        );
-      },
-    );
+    return const SizedBox.shrink();
   }
 
   Widget _buildLogoutButton(BuildContext context, AppLocalizations l10n) {
@@ -584,9 +551,16 @@ class _ProfileViewState extends State<_ProfileView> {
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              AuthService().signOut();
+              await AuthService().signOut();
+              if (context.mounted) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SplashPage()),
+                  (route) => false,
+                );
+              }
             },
             child: Text(l10n.confirm),
           ),

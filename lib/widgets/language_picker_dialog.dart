@@ -8,16 +8,16 @@ import '../providers/language_provider.dart';
 class LanguagePickerDialog extends StatefulWidget {
   const LanguagePickerDialog({super.key});
 
-  /// Shows dialog; does not return until user picks a language.
+  /// Shows the language picker dialog.
+  /// Caller is responsible for deciding WHEN to call this (e.g., once per new user).
   static Future<void> showIfNeeded(BuildContext context) async {
-    final languageProvider = context.read<LanguageProvider>();
-    if (languageProvider.hasSelectedLanguage) return;
+    if (!context.mounted) return;
 
     await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => ChangeNotifierProvider.value(
-        value: languageProvider,
+        value: context.read<LanguageProvider>(),
         child: const LanguagePickerDialog(),
       ),
     );
