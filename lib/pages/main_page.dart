@@ -75,7 +75,7 @@ class MainPage extends StatelessWidget {
             offset: const Offset(0, 10),
           ),  
         ],
-        border: Border.all(color: const Color(0xFF38BDF8).withvalues(alpha: 0.2)),
+        border: Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.2)),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(30),
@@ -86,7 +86,7 @@ class MainPage extends StatelessWidget {
             onDestinationSelected: nav.setIndex,
             backgroundColor: Colors.transparent,
             elevation: 0,
-            indicatorColor: const Color(0xFF38BDF8).withvalues(alpha: 0.2),
+            indicatorColor: const Color(0xFF38BDF8).withValues(alpha: 0.2),
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
             destinations: [
               const NavigationDestination(
@@ -137,7 +137,7 @@ class MainPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(isDark ? 0.3 : 0.2),
+            color: AppColors.primary.withValues(alpha: isDark ? 0.3 : 0.2),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -150,7 +150,7 @@ class MainPage extends StatelessWidget {
           onDestinationSelected: nav.setIndex,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          indicatorColor: Colors.white.withOpacity(0.15),
+          indicatorColor: Colors.white.withValues(alpha: 0.15),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           destinations: [
             NavigationDestination(

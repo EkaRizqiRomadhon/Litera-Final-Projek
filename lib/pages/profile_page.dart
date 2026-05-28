@@ -15,8 +15,6 @@ import '../providers/history_provider.dart';
 import '../widgets/profile_avatar.dart';
 import '../widgets/profile_menu_tile.dart';
 import '../widgets/stat_card.dart';
-import '../services/user_service.dart';
-import 'admin/admin_dashboard_page.dart';
 import 'splash_page.dart';
 
 class ProfilePage extends StatelessWidget {

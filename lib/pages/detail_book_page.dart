@@ -10,7 +10,6 @@ import '../providers/book_provider.dart';
 import '../providers/history_provider.dart';
 import '../providers/rating_provider.dart';
 import '../services/firestore_service.dart';
-import '../services/reading_history_service.dart';
 import '../widgets/book_card.dart';
 import '../widgets/book_cover_widget.dart';
 import '../widgets/rating_bar_widget.dart';

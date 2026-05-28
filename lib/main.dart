@@ -10,7 +10,6 @@ import 'controllers/profile_controller.dart';
 import 'providers/navigation_provider.dart';
 import 'core/app_theme.dart';
 import 'firebase_options.dart';
-import 'pages/login_page.dart';
 import 'pages/main_page.dart';
 import 'pages/splash_page.dart';
 import 'providers/book_provider.dart';
