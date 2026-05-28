@@ -146,7 +146,7 @@ class _BookFormPageState extends State<BookFormPage> {
                           child: Image.network(
                             _thumbnailController.text,
                             height: 150,
-                            errorBuilder: (_, __, ___) => const Text('Invalid image URL'),
+                            errorBuilder: (_, _, _) => const Text('Invalid image URL'),
                           ),
                         ),
                       ),
@@ -218,7 +218,7 @@ class _BookFormPageState extends State<BookFormPage> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: isDark ? AppColors.primary.withOpacity(0.2) : AppColors.divider),
+          borderSide: BorderSide(color: isDark ? AppColors.primary.withValues(alpha: 0.2) : AppColors.divider),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
