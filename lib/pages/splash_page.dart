@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:litera2/pages/main_page.dart';
+import '../main.dart';
+import 'main_page.dart';
 import '../core/app_colors.dart';
 import 'login_page.dart';
 
@@ -53,12 +54,13 @@ class SplashPage extends StatelessWidget {
                 final user = FirebaseAuth.instance.currentUser;
                 if (!context.mounted) return;
                 if (user != null) {
-                  Navigator.pushReplacement(
+                  Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => const MainPage()),
+                    MaterialPageRoute(builder: (context) => const AuthGate()),
+                    (route) => false,
                   );
                 } else {
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const LoginPage()),
                   );

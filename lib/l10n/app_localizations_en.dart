@@ -178,6 +178,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nameUpdated => 'Name updated successfully!';
 
   @override
+  String get errorInvalidEmail => 'Invalid email format';
+
+  @override
+  String get errorPasswordLength => 'Password must be at least 8 characters';
+
+  @override
+  String get errorPasswordMatch => 'Passwords do not match';
+
+  @override
   String get darkMode => 'Dark Mode';
 
   @override

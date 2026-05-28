@@ -178,6 +178,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get nameUpdated => 'Nama berhasil diperbarui!';
 
   @override
+  String get errorInvalidEmail => 'Format email tidak valid';
+
+  @override
+  String get errorPasswordLength => 'Kata sandi minimal 8 karakter';
+
+  @override
+  String get errorPasswordMatch => 'Konfirmasi kata sandi tidak cocok';
+
+  @override
   String get darkMode => 'Tema Gelap';
 
   @override

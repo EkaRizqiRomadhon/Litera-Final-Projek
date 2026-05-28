@@ -75,6 +75,9 @@
   "nameLabel": "Nama Tampilan",
   "nameEmpty": "Nama tidak boleh kosong",
   "nameUpdated": "Nama berhasil diperbarui!",
+  "errorInvalidEmail": "Format email tidak valid",
+  "errorPasswordLength": "Kata sandi minimal 8 karakter",
+  "errorPasswordMatch": "Konfirmasi kata sandi tidak cocok",
 
   "darkMode": "Tema Gelap",
   "darkModeOn": "Aktif",

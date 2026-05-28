@@ -80,4 +80,37 @@ class ReadingHistoryModel {
 
   /// Apakah selesai dibaca
   bool get isFinished => progress >= 1.0;
+
+  /// Serialize ke JSON untuk SharedPreferences (local storage)
+  Map<String, dynamic> toJson() => {
+        'bookId': bookId,
+        'title': title,
+        'authors': authors,
+        'thumbnail': thumbnail,
+        'progress': progress,
+        'lastPage': lastPage,
+        'totalPages': totalPages,
+        'lastReadAt': lastReadAt.toIso8601String(),
+        'addedAt': addedAt.toIso8601String(),
+      };
+
+  /// Restore dari JSON (SharedPreferences)
+  factory ReadingHistoryModel.fromJson(Map<String, dynamic> data) {
+    DateTime parseDate(dynamic value) {
+      if (value is String) return DateTime.parse(value);
+      return DateTime.now();
+    }
+
+    return ReadingHistoryModel(
+      bookId: data['bookId'] as String? ?? '',
+      title: data['title'] as String? ?? '',
+      authors: data['authors'] as String? ?? '',
+      thumbnail: data['thumbnail'] as String?,
+      progress: (data['progress'] as num?)?.toDouble() ?? 0.0,
+      lastPage: data['lastPage'] as int? ?? 0,
+      totalPages: data['totalPages'] as int? ?? 0,
+      lastReadAt: parseDate(data['lastReadAt']),
+      addedAt: parseDate(data['addedAt']),
+    );
+  }
 }

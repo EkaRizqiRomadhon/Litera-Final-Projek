@@ -422,6 +422,24 @@ abstract class AppLocalizations {
   /// **'Nama berhasil diperbarui!'**
   String get nameUpdated;
 
+  /// No description provided for @errorInvalidEmail.
+  ///
+  /// In id, this message translates to:
+  /// **'Format email tidak valid'**
+  String get errorInvalidEmail;
+
+  /// No description provided for @errorPasswordLength.
+  ///
+  /// In id, this message translates to:
+  /// **'Kata sandi minimal 8 karakter'**
+  String get errorPasswordLength;
+
+  /// No description provided for @errorPasswordMatch.
+  ///
+  /// In id, this message translates to:
+  /// **'Konfirmasi kata sandi tidak cocok'**
+  String get errorPasswordMatch;
+
   /// No description provided for @darkMode.
   ///
   /// In id, this message translates to:

@@ -15,6 +15,7 @@ import '../providers/history_provider.dart';
 import '../widgets/profile_avatar.dart';
 import '../widgets/profile_menu_tile.dart';
 import '../widgets/stat_card.dart';
+import '../main.dart';
 import 'splash_page.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -555,7 +556,7 @@ class _ProfileViewState extends State<_ProfileView> {
               if (context.mounted) {
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (_) => const SplashPage()),
+                  MaterialPageRoute(builder: (_) => const AuthGate()),
                   (route) => false,
                 );
               }

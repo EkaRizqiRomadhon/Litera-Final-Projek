@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'models/user_profile_model.dart';
 import 'services/user_service.dart';
+import 'services/reading_history_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -25,6 +26,10 @@ class AuthService {
       );
 
       await _auth.signInWithCredential(credential);
+      
+      // Sync local reading history ke Firestore
+      await ReadingHistoryService.syncLocalHistoryToFirestore();
+      
       return "success";
     } catch (e) {
       return e.toString();
@@ -50,6 +55,9 @@ class AuthService {
           createdAt: DateTime.now(),
         );
         await UserService.saveProfile(profile);
+        
+        // Sync local reading history ke Firestore
+        await ReadingHistoryService.syncLocalHistoryToFirestore();
       }
 
       return "success";
@@ -77,6 +85,9 @@ class AuthService {
           );
           await UserService.saveProfile(profile);
         }
+        
+        // Sync local reading history ke Firestore
+        await ReadingHistoryService.syncLocalHistoryToFirestore();
       }
       return "success";
     } on FirebaseAuthException catch (e) {

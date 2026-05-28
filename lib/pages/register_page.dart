@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:litera2/l10n/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../core/app_theme.dart';
 import '../widgets/custom_elements.dart';
@@ -35,41 +34,41 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // ================= VALIDATION =================
-  String? _validateName(String? value, AppLocalizations l10n) {
-    if (value == null || value.isEmpty) return l10n.errorGeneral;
-    if (value.length < 3) return l10n.errorGeneral;
+  String? _validateName(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Nama tidak boleh kosong';
+    if (value.trim().length < 3) return 'Nama tidak boleh kosong'; 
     return null;
   }
 
-  String? _validateEmail(String? value, AppLocalizations l10n) {
-    if (value == null || value.isEmpty) return l10n.emailEmpty;
-    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) return l10n.loginError;
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) return 'Email tidak boleh kosong';
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value.trim())) return 'Format email tidak valid';
     return null;
   }
 
-  String? _validatePassword(String? value, AppLocalizations l10n) {
-    if (value == null || value.isEmpty) return l10n.errorGeneral;
-    if (value.length < 8) return l10n.errorGeneral;
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return 'Kata sandi minimal 8 karakter';
+    if (value.length < 8) return 'Kata sandi minimal 8 karakter';
     return null;
   }
 
-  String? _validateConfirmPassword(String? value, AppLocalizations l10n) {
-    if (value == null || value.isEmpty) return l10n.errorGeneral;
-    if (value != _passwordController.text) return l10n.errorGeneral;
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) return 'Konfirmasi kata sandi tidak cocok';
+    if (value != _passwordController.text) return 'Konfirmasi kata sandi tidak cocok';
     return null;
   }
 
   // ================= DIALOG =================
-  void _showTermsDialog(AppLocalizations l10n) {
+  void _showTermsDialog() {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(l10n.termsAndConditions),
-        content: Text(l10n.termsDetail),
+        title: const Text('Syarat & Ketentuan'),
+        content: const Text('Silakan baca dan setujui ketentuan kami sebelum melanjutkan.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.confirm),
+            child: const Text('Konfirmasi'),
           ),
         ],
       ),
@@ -77,11 +76,11 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // ================= REGISTER =================
-  Future<void> _handleRegister(AppLocalizations l10n) async {
+  Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_isAgreed) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.termsAgreementError)),
+        const SnackBar(content: Text('Kamu harus menyetujui ketentuan terlebih dahulu.')),
       );
       return;
     }
@@ -96,7 +95,9 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _isLoading = false);
 
     if (result == "success") {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.registrationSuccess)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Pendaftaran berhasil! Selamat datang di Litera.'))
+      );
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result)));
@@ -106,8 +107,6 @@ class _RegisterPageState extends State<RegisterPage> {
   // ================= UI =================
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
     // Auth pages selalu light mode
     return Theme(
       data: AppTheme.light,
@@ -120,17 +119,17 @@ class _RegisterPageState extends State<RegisterPage> {
       ),
       body: Column(
         children: [
-          Text(
-            l10n.createAccount,
-            style: const TextStyle(
+          const Text(
+            'Buat Akun',
+            style: TextStyle(
               fontSize: 32,
               color: Colors.white,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
-            l10n.joinMessage,
-            style: const TextStyle(color: Colors.white70),
+          const Text(
+            'Bergabung dengan Litera sekarang',
+            style: TextStyle(color: Colors.white70),
           ),
           const SizedBox(height: 30),
           Expanded(
@@ -146,33 +145,33 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Column(
                       children: [
                         buildInputField(
-                          label: l10n.fullName,
+                          label: 'Nama Lengkap',
                           hint: "John Doe",
                           controller: _nameController,
-                          validator: (v) => _validateName(v, l10n),
+                          validator: _validateName,
                         ),
                         buildInputField(
-                          label: l10n.email,
+                          label: 'Email',
                           hint: "email@litera.com",
                           controller: _emailController,
-                          validator: (v) => _validateEmail(v, l10n),
+                          validator: _validateEmail,
                         ),
                         buildInputField(
-                          label: l10n.password,
-                          hint: "Min. 8 characters",
+                          label: 'Kata Sandi',
+                          hint: "Min. 8 karakter",
                           isPassword: true,
                           isObscured: _isPasswordObscured,
                           controller: _passwordController,
-                          validator: (v) => _validatePassword(v, l10n),
+                          validator: _validatePassword,
                           onToggleVisibility: () => setState(() => _isPasswordObscured = !_isPasswordObscured),
                         ),
                         buildInputField(
-                          label: l10n.confirmPassword,
-                          hint: l10n.confirmPassword,
+                          label: 'Konfirmasi Kata Sandi',
+                          hint: 'Konfirmasi Kata Sandi',
                           isPassword: true,
                           isObscured: _isConfirmObscured,
                           controller: _confirmPasswordController,
-                          validator: (v) => _validateConfirmPassword(v, l10n),
+                          validator: _validateConfirmPassword,
                           onToggleVisibility: () => setState(() => _isConfirmObscured = !_isConfirmObscured),
                         ),
 
@@ -187,15 +186,15 @@ class _RegisterPageState extends State<RegisterPage> {
                             Expanded(
                               child: Text.rich(
                                 TextSpan(
-                                  text: "${l10n.iAgreeTo} ",
+                                  text: "Saya setuju dengan ",
                                   children: [
                                     TextSpan(
-                                      text: l10n.termsAndConditions,
+                                      text: 'Syarat & Ketentuan',
                                       style: const TextStyle(
                                         color: AppColors.accent,
                                         fontWeight: FontWeight.bold,
                                       ),
-                                      recognizer: TapGestureRecognizer()..onTap = () => _showTermsDialog(l10n),
+                                      recognizer: TapGestureRecognizer()..onTap = _showTermsDialog,
                                     ),
                                   ],
                                 ),
@@ -206,7 +205,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 25),
                         ElevatedButton(
-                          onPressed: _isLoading ? null : () => _handleRegister(l10n),
+                          onPressed: _isLoading ? null : _handleRegister,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             minimumSize: const Size(double.infinity, 60),
@@ -214,9 +213,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           ),
                           child: _isLoading
                               ? const CircularProgressIndicator(color: Colors.white)
-                              : Text(
-                                  l10n.registerNow,
-                                  style: const TextStyle(
+                              : const Text(
+                                  'Daftar Sekarang',
+                                  style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -224,13 +223,13 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ),
                         ),
                         const SizedBox(height: 20),
-                        buildDivider(l10n.or),
+                        buildDivider('ATAU'),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("${l10n.alreadyHaveAccount} "),
+                            const Text("Sudah punya akun? "),
                             buildClickableText(
-                              text: l10n.login,
+                              text: 'Masuk',
                               onTap: () => Navigator.pop(context),
                             ),
                           ],

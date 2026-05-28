@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:litera2/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'controllers/profile_controller.dart';
 import 'providers/navigation_provider.dart';
@@ -18,7 +17,6 @@ import 'providers/theme_provider.dart';
 import 'providers/bookmark_provider.dart';
 import 'providers/history_provider.dart';
 import 'services/cache_service.dart';
-import 'widgets/language_picker_dialog.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,13 +60,13 @@ class LiteraApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: const _AuthGate(),
+      home: const AuthGate(),
     );
   }
 }
 
-class _AuthGate extends StatelessWidget {
-  const _AuthGate();
+class AuthGate extends StatelessWidget {
+  const AuthGate({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -85,24 +83,6 @@ class _AuthGate extends StatelessWidget {
             if (!context.mounted) return;
             context.read<BookmarkProvider>().startListening();
             context.read<HistoryProvider>().startListening();
-
-            // Show language picker HANYA SEKALI untuk user baru
-            // Menggunakan flag per-UID di SharedPreferences
-            final user = snapshot.data;
-            if (user != null) {
-              final prefs = await SharedPreferences.getInstance();
-              final flagKey = 'lang_picker_shown_${user.uid}';
-              final alreadyShown = prefs.getBool(flagKey) ?? false;
-
-              if (!alreadyShown && context.mounted) {
-                // Tandai sudah ditampilkan SEBELUM menampilkan dialog
-                // agar tidak muncul lagi meski dialog di-dismiss paksa
-                await prefs.setBool(flagKey, true);
-                if (context.mounted) {
-                  await LanguagePickerDialog.showIfNeeded(context);
-                }
-              }
-            }
 
             // Bersihkan cache lama
             if (context.mounted) {

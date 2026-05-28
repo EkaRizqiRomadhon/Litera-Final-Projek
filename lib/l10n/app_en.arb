@@ -75,6 +75,9 @@
   "nameLabel": "Display Name",
   "nameEmpty": "Name cannot be empty",
   "nameUpdated": "Name updated successfully!",
+  "errorInvalidEmail": "Invalid email format",
+  "errorPasswordLength": "Password must be at least 8 characters",
+  "errorPasswordMatch": "Passwords do not match",
 
   "darkMode": "Dark Mode",
   "darkModeOn": "On",
