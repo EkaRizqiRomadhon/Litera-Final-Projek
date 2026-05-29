@@ -176,6 +176,10 @@ Buku-buku berikut tersedia langsung dalam aplikasi dan disimpan di Supabase Stor
 
 Project ini bersifat privat dan dikembangkan untuk keperluan akademis.
 
+## App Realease
+
+https://github.com/EkaRizqiRomadhon/litera2-final-projek/releases/tag/litera-app
+
 ---
 
 <div align="center">
