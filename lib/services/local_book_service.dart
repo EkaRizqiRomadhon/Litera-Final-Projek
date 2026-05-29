@@ -16,8 +16,8 @@ class LocalBookService {
       language: 'id',
       previewLink: '',
       infoLink: '',
-      thumbnail: 'assets/cantik_itu_luka_cover.jpg',
-      pdfDownloadLink: 'assets/books/cantik_itu_luka.pdf',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/cantik_itu_luka_cover.jpg',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/cantik_itu_luka.pdf',
       isEbook: true,
     ),
     BookModel(
@@ -34,8 +34,8 @@ class LocalBookService {
       language: 'id',
       previewLink: '',
       infoLink: '',
-      thumbnail: 'assets/ronggeng_dukuh_paruk_cover.jpeg',
-      pdfDownloadLink: 'assets/books/ronggeng_dukuh_paruk.pdf',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/ronggeng_dukuh_paruk_cover.jpeg',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/ronggeng_dukuh_paruk.pdf',
       isEbook: true,
     ),
     BookModel(
@@ -52,8 +52,8 @@ class LocalBookService {
       language: 'id',
       previewLink: '',
       infoLink: '',
-      thumbnail: 'assets/sejarah_dunia_yang_disembunyikan_cover.jpg',
-      pdfDownloadLink: 'assets/books/sejarah_disembunyikan.pdf',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/sejarah_dunia_yang_disembunyikan_cover.jpg',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/sejarah_disembunyikan.pdf',
       isEbook: true,
     ),
     BookModel(
@@ -70,8 +70,8 @@ class LocalBookService {
       language: 'en',
       previewLink: '',
       infoLink: '',
-      thumbnail: 'https://covers.openlibrary.org/b/isbn/9781118412930-L.jpg',
-      pdfDownloadLink: 'assets/books/thermodynamics.pdf',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/thermodynamics.jpeg',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/thermodynamics.pdf',
       isEbook: true,
     ),
     BookModel(
@@ -88,8 +88,8 @@ class LocalBookService {
       language: 'id',
       previewLink: '',
       infoLink: '',
-      thumbnail: 'https://img.freepik.com/free-vector/polygonal-indonesian-map-design_23-2148412586.jpg',
-      pdfDownloadLink: 'assets/books/konflik_kolaborasi.pdf',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/konflik.webp',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/konflik_kolaborasi.pdf',
       isEbook: true,
     ),
     BookModel(
@@ -106,8 +106,8 @@ class LocalBookService {
       language: 'id',
       previewLink: '',
       infoLink: '',
-      thumbnail: 'assets/broken_strings_cover.jpg',
-      pdfDownloadLink: 'assets/books/broken_strings.pdf',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/broken_strings_cover.jpg',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/broken_strings.pdf',
       isEbook: true,
     ),
     BookModel(
@@ -124,8 +124,62 @@ class LocalBookService {
       language: 'id',
       previewLink: '',
       infoLink: '',
-      thumbnail: 'assets/filosofi_teras_cover.jpg',
-      pdfDownloadLink: 'assets/books/Filosofi_Teras.pdf',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/filosofi_teras_cover.jpg',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/Filosofi_Teras.pdf',
+      isEbook: true,
+    ),
+    BookModel(
+      id: 'local_Bumi_Manusia',
+      title: 'Bumi Manusia',
+      authors: ['Pramoedya Ananta Toer'],
+      publisher: 'Lentera Dipantara',
+      publishedDate: '1980-01-01',
+      description: 'Bumi Manusia adalah novel karya Pramoedya Ananta Toer yang menceritakan kehidupan Minke, seorang pribumi terpelajar pada masa kolonial Hindia Belanda.',
+      pageCount: 535,
+      categories: ['Novel', 'Sejarah'],
+      averageRating: 4.8,
+      ratingsCount: 120,
+      language: 'id',
+      previewLink: '',
+      infoLink: '',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/Bumi%20Manusia.jpg',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/Bumi-Manusia.pdf',
+      isEbook: true,
+      ),
+      BookModel(
+      id: 'local_Laskar_Pelangi',
+      title: 'Laskar Pelangi',
+      authors: ['Andrea Hirata'],
+      publisher: 'Bentang Pustaka',
+      publishedDate: '2005-01-01',
+      description: 'Laskar Pelangi adalah novel karya Andrea Hirata yang menceritakan kisah persahabatan dan perjuangan sekelompok anak di Belitung untuk mendapatkan pendidikan.',
+      pageCount: 529,
+      categories: ['Novel', 'Fiksi'],
+      averageRating: 4.7,
+      ratingsCount: 150,
+      language: 'id',
+      previewLink: '',
+      infoLink: '',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/Laskar%20Pelangi%20Design_%20Andreas%20Kusumahadi.jpg',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/laskar%20pelani.pdf',
+      isEbook: true,
+    ),
+    BookModel(
+      id: 'local_Negeri_5_Menara',
+      title: 'Negeri 5 Menara',
+      authors: ['Ahmad Fuadi'],
+      publisher: 'Gramedia Pustaka Utama',
+      publishedDate: '2009-01-01',
+      description: 'Negeri 5 Menara adalah novel inspiratif karya Ahmad Fuadi yang menceritakan perjuangan enam santri di Pondok Madani untuk meraih mimpi mereka dengan semboyan “Man Jadda Wajada”.',
+      pageCount: 423,
+      categories: ['Novel', 'Inspirasi'],
+      averageRating: 4.7,
+      ratingsCount: 95,
+      language: 'id',
+      previewLink: '',
+      infoLink: '',
+      thumbnail: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/cover_book/Negeri%205%20Menara.jpg',
+      pdfDownloadLink: 'https://lhakcofpljwbtoydeaqv.supabase.co/storage/v1/object/public/book/negeri-5-menara.pdf',
       isEbook: true,
     ),
   ];
@@ -134,14 +188,8 @@ class LocalBookService {
   static List<BookModel> getBooksByCategory(String category) {
     if (category == 'Semua') return localBooks;
     final catLower = category.toLowerCase();
-    
     return localBooks.where((book) {
-      return book.categories.any((c) => c.toLowerCase().contains(catLower)) ||
-             (category == 'Sastra Indo' && book.categories.contains('Sastra Indo')) ||
-             (category == 'Sejarah Indo' && book.categories.contains('Sejarah Indo')) ||
-             (category == 'Novel' && book.categories.contains('Novel')) ||
-             (category == 'Teknologi' && book.categories.contains('Teknologi')) ||
-             (category == 'Sejarah' && book.categories.contains('Sejarah'));
+      return book.categories.any((c) => c.toLowerCase().contains(catLower));
     }).toList();
   }
 

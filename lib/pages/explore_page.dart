@@ -6,7 +6,7 @@ import 'package:litera2/l10n/app_localizations.dart';
 import '../core/app_colors.dart';
 import '../providers/book_provider.dart';
 import '../models/book_model.dart';
-import '../services/google_books_service.dart';
+
 import '../widgets/app_footer.dart';
 import '../widgets/book_card.dart';
 import '../widgets/book_cover_widget.dart';
@@ -373,4 +373,24 @@ class _SearchItem extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Kategori buku sesuai data di LocalBookService
+class BookCategory {
+  final String label;
+  final String query;
+
+  const BookCategory({required this.label, required this.query});
+
+  static const List<BookCategory> all = [
+    BookCategory(label: 'Semua',      query: ''),
+    BookCategory(label: 'Novel',      query: 'Novel'),
+    BookCategory(label: 'Sastra Indo',query: 'Sastra Indo'),
+    BookCategory(label: 'Sejarah',    query: 'Sejarah'),
+    BookCategory(label: 'Filsafat',   query: 'Filsafat'),
+    BookCategory(label: 'Inspirasi',  query: 'Inspirasi'),
+    BookCategory(label: 'Teknologi',  query: 'Teknologi'),
+    BookCategory(label: 'Edukasi',    query: 'Edukasi'),
+    BookCategory(label: 'Romance',    query: 'Romance'),
+  ];
 }

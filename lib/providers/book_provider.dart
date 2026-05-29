@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import '../models/book_model.dart';
-import '../services/google_books_service.dart';
 import '../services/local_book_service.dart';
 
 /// Load state enum shared across all provider sections.
@@ -69,60 +68,18 @@ class BookProvider extends ChangeNotifier {
   Future<void> loadDashboard({bool force = false}) async {
     if (_dashboardState == LoadState.loading) return;
     if (_dashboardState == LoadState.loaded && !force) return;
-    if (force) GoogleBooksService.clearCache();
 
     _dashboardState = LoadState.loading;
     _dashboardError = '';
     notifyListeners();
 
     try {
-      // Load sequentially to reduce peak memory and CPU load
-      final popular = await _safeLoad(() => GoogleBooksService.getPopularBooks(maxResults: 6));
-      final newest = await _safeLoad(() => GoogleBooksService.getNewestBooks(maxResults: 6));
-      final recommended = await _safeLoad(() => GoogleBooksService.getRecommendations(
-            categories: ['fiction', 'self-help', 'technology'],
-            maxResults: 6,
-          ));
-      final trending = await _safeLoad(() => GoogleBooksService.getTrendingBooks(maxResults: 6));
-
-      final results = [popular, newest, recommended, trending];
-
-      _popularBooks = results[0];
-      _newestBooks = results[1];
-      _recommendedBooks = results[2];
-      _trendingBooks = results[3];
-
-      // Inject local books at the beginning of each list
       final local = LocalBookService.localBooks;
       
-      // Safely extract local books with fallback for missing entries
-      final cantikLuka = _findLocalBookById(local, 'local_cantik_itu_luka');
-      final ronggeng = _findLocalBookById(local, 'local_ronggeng_dukuh_paruk');
-      final sejarahDunia = _findLocalBookById(local, 'local_sejarah_disembunyikan');
-      final thermo = _findLocalBookById(local, 'local_thermodynamics');
-      final konflik = _findLocalBookById(local, 'local_konflik_kolaborasi');
-      final broken = _findLocalBookById(local, 'local_broken_strings');
-
-      // Build lists, filtering out null entries (missing books)
-      _popularBooks = [
-        ?sejarahDunia,
-        ?broken,
-        ..._popularBooks
-      ];
-      _newestBooks = [
-        ?broken,
-        ?konflik,
-        ..._newestBooks
-      ];
-      _recommendedBooks = [
-        ?thermo,
-        ..._recommendedBooks
-      ];
-      _trendingBooks = [
-        ?cantikLuka,
-        ?ronggeng,
-        ..._trendingBooks
-      ];
+      _popularBooks = local.toList();
+      _newestBooks = local.toList();
+      _recommendedBooks = local.toList();
+      _trendingBooks = local.toList();
 
       final anyLoaded = _popularBooks.isNotEmpty ||
           _newestBooks.isNotEmpty ||
@@ -153,17 +110,11 @@ class BookProvider extends ChangeNotifier {
     _categoryError = '';
     _categoryBooks = [];
     _categoryPage = 0;
-    _categoryHasMore = true;
+    _categoryHasMore = false;
     notifyListeners();
 
     try {
-      final localMatches = LocalBookService.getBooksByCategory(category);
-      _categoryBooks = localMatches; // Ensure local matches are assigned immediately
-      notifyListeners(); // Update UI with local books while API loads
-
-      final books = await _fetchCategoryPage(category, apiQuery, 0);
-      _categoryBooks = [...localMatches, ...books];
-      _categoryHasMore = books.length >= 20;
+      _categoryBooks = LocalBookService.getBooksByCategory(category);
       _categoryState = _categoryBooks.isEmpty ? LoadState.error : LoadState.loaded;
       if (_categoryBooks.isEmpty) _categoryError = 'errorNoBooks';
     } catch (e) {
@@ -176,31 +127,7 @@ class BookProvider extends ChangeNotifier {
 
   /// Load next page for infinite scroll.
   Future<void> loadMoreCategory(String apiQuery) async {
-    if (_categoryState == LoadState.loading || !_categoryHasMore) return;
-    _categoryPage++;
-    try {
-      final more = await _fetchCategoryPage(_selectedCategory, apiQuery, _categoryPage);
-      _categoryBooks.addAll(more);
-      _categoryHasMore = more.length >= 20;
-    } catch (_) {
-      _categoryHasMore = false;
-    }
-    notifyListeners();
-  }
-
-  Future<List<BookModel>> _fetchCategoryPage(
-    String category,
-    String apiQuery,
-    int page,
-  ) async {
-    if (category == 'Semua') {
-      return GoogleBooksService.getPopularBooks(maxResults: 20);
-    }
-    return GoogleBooksService.searchBooks(
-      apiQuery,
-      startIndex: page * 20,
-      maxResults: 20,
-    );
+    // Local data only, no more pages
   }
 
   // ── Search ────────────────────────────────────────────────────────────────────
@@ -209,10 +136,7 @@ class BookProvider extends ChangeNotifier {
     final q = query.trim();
 
     if (q.isEmpty) {
-      _searchResults = [];
-      _searchState = LoadState.idle;
-      _lastQuery = '';
-      notifyListeners();
+      clearSearch();
       return;
     }
 
@@ -222,14 +146,11 @@ class BookProvider extends ChangeNotifier {
     _searchState = LoadState.loading;
     _searchError = '';
     _searchPage = 0;
-    _searchHasMore = true;
+    _searchHasMore = false;
     notifyListeners();
 
     try {
-      final localMatches = LocalBookService.searchBooks(q);
-      final apiResults = await GoogleBooksService.searchBooks(q, maxResults: 12);
-      _searchResults = [...localMatches, ...apiResults];
-      _searchHasMore = apiResults.length >= 20;
+      _searchResults = LocalBookService.searchBooks(q);
       _searchState = LoadState.loaded;
     } catch (e) {
       _searchState = LoadState.error;
@@ -240,20 +161,7 @@ class BookProvider extends ChangeNotifier {
   }
 
   Future<void> loadMoreSearch() async {
-    if (_searchState == LoadState.loading || !_searchHasMore || _lastQuery.isEmpty) return;
-    _searchPage++;
-    try {
-      final more = await GoogleBooksService.searchBooks(
-        _lastQuery,
-        startIndex: _searchPage * 20,
-        maxResults: 20,
-      );
-      _searchResults.addAll(more);
-      _searchHasMore = more.length >= 20;
-    } catch (_) {
-      _searchHasMore = false;
-    }
-    notifyListeners();
+    // Local data only, no more pages
   }
 
   void clearSearch() {
@@ -276,7 +184,10 @@ class BookProvider extends ChangeNotifier {
     _relatedState = LoadState.loading;
     notifyListeners();
     try {
-      _relatedBooks = await GoogleBooksService.getRelatedBooks(book, maxResults: 6);
+      _relatedBooks = LocalBookService.localBooks
+          .where((b) => b.id != book.id && b.categories.any((c) => book.categories.contains(c)))
+          .take(6)
+          .toList();
       _relatedState = LoadState.loaded;
     } catch (_) {
       _relatedState = LoadState.error;
@@ -286,24 +197,7 @@ class BookProvider extends ChangeNotifier {
 
   // ── Helpers ───────────────────────────────────────────────────────────────────
 
-  Future<List<BookModel>> _safeLoad(Future<List<BookModel>> Function() loader) async {
-    try {
-      return await loader();
-    } catch (e) {
-      debugPrint('[BookProvider] _safeLoad error: $e');
-      return [];
-    }
-  }
 
-  /// Safely finds a local book by ID, returns null if not found instead of throwing
-  BookModel? _findLocalBookById(List<BookModel> books, String id) {
-    try {
-      return books.firstWhere((b) => b.id == id);
-    } catch (e) {
-      debugPrint('[BookProvider] ⚠️ Local book not found: $id');
-      return null;
-    }
-  }
 
   String _friendlyError(Object e) {
     final msg = e.toString();
