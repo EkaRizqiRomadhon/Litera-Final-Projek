@@ -168,7 +168,9 @@ Buku-buku berikut tersedia langsung dalam aplikasi dan disimpan di Supabase Stor
 
 > Aplikasi ini dikembangkan sebagai proyek akhir.
 
----
+1. Eka Rizqi Romadhon
+2. Moch Hafidz Asrof
+3. M. Abyan Herdy S.
 
 ## 📄 Lisensi
 
